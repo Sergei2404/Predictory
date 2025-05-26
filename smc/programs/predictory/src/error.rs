@@ -54,4 +54,6 @@ pub enum ProgramError {
     StakeTooLow,
     #[msg("Not enough trust to burn")]
     NotEnoughTrust,
+    #[msg("Not funds to withdraw")]
+    InsufficientFunds,
 }

@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{
     context::{transfer_sol, withdraw_sol, INITIAL_LVL},
+    error::ProgramError,
     id,
     state::user::User,
 };
@@ -92,10 +93,15 @@ impl TransferStake<'_> {
 }
 
 impl WithdrawStake<'_> {
-    pub fn withdraw(&mut self) -> Result<()> {
+    pub fn withdraw(&mut self, withdraw_amount: Option<u64>) -> Result<()> {
         let user = &mut self.user;
 
-        let amount = user.stake;
+        let amount = if let Some(amount) = withdraw_amount {
+            require!(amount < user.stake, ProgramError::InsufficientFunds);
+            amount
+        } else {
+            user.stake
+        };
 
         if amount == 0 {
             msg!("User has no available stake - {}", self.user.payer,);
@@ -108,7 +114,7 @@ impl WithdrawStake<'_> {
             amount,
         )?;
 
-        user.stake = 0;
+        user.stake -= amount;
 
         msg!("User stake withdrawn - {amount} for {}", self.user.payer,);
 

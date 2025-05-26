@@ -1,4 +1,4 @@
-import { errors } from "../../target/idl/greedy_solana.json";
+import { errors } from "../../target/idl/predictory.json";
 
 export function errorRegexp(code: number, instruction = 0) {
   return new RegExp(

@@ -28,7 +28,6 @@ import {
   findProgramDataAddress,
   findUserAddress,
 } from "./util/entity";
-import { assert } from "chai";
 
 const provider = AnchorProvider.env();
 setProvider(provider);
@@ -84,19 +83,32 @@ describe("General event test", () => {
       const [programData] = findProgramDataAddress();
 
       // Creation:
-      await program.methods
-        .initializeContractState(
-          authority.publicKey,
-          multiplier,
-          eventPrice,
-          platformFee,
-          orgReward
-        )
-        .accounts({
-          authority: provider.publicKey,
-          programData,
-        })
-        .rpc();
+      try {
+        await program.methods
+          .setContractAuthority(authority.publicKey)
+          .accounts({
+            authority: provider.publicKey,
+          })
+          .rpc();
+      } catch (error) {
+        if (!error.message.includes("AccountNotInitialized")) {
+          throw error;
+        }
+
+        await program.methods
+          .initializeContractState(
+            authority.publicKey,
+            multiplier,
+            eventPrice,
+            platformFee,
+            orgReward
+          )
+          .accounts({
+            authority: provider.publicKey,
+            programData,
+          })
+          .rpc();
+      }
 
       // Fetching user:
       const fetchedStateAccount = await program.account.state.fetch(state);
@@ -179,7 +191,7 @@ describe("General event test", () => {
 
       // Complete event:
       await program.methods
-        .withdrawStake()
+        .withdrawStake(null)
         .accounts({
           sender: authority.publicKey,
         })

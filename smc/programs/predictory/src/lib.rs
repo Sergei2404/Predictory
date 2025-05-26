@@ -48,6 +48,14 @@ pub mod predictory {
         ctx.accounts.set_price(event_price)
     }
 
+    pub fn set_contract_fee(ctx: Context<UpdateContractState>, fee: u64) -> Result<()> {
+        ctx.accounts.set_platform_fee(fee)
+    }
+
+    pub fn set_org_reward(ctx: Context<UpdateContractState>, reward: u64) -> Result<()> {
+        ctx.accounts.set_org_reward(reward)
+    }
+
     pub fn create_user(ctx: Context<CreateUser>, name: [u8; 32]) -> Result<()> {
         ctx.accounts.create_user(name)
     }
@@ -56,8 +64,8 @@ pub mod predictory {
         ctx.accounts.transfer_stake(stake)
     }
 
-    pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
-        ctx.accounts.withdraw()
+    pub fn withdraw_stake(ctx: Context<WithdrawStake>, amount: Option<u64>) -> Result<()> {
+        ctx.accounts.withdraw(amount)
     }
 
     pub fn create_event(

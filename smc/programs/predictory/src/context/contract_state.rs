@@ -103,4 +103,24 @@ impl UpdateContractState<'_> {
 
         Ok(())
     }
+
+    pub fn set_platform_fee(&mut self, fee: u64) -> Result<()> {
+        let state = &mut self.state;
+
+        state.platform_fee = fee;
+
+        msg!("Contract fee updated");
+
+        Ok(())
+    }
+
+    pub fn set_org_reward(&mut self, reward: u64) -> Result<()> {
+        let state = &mut self.state;
+
+        state.org_reward = reward;
+
+        msg!("Contract org reward updated");
+
+        Ok(())
+    }
 }
